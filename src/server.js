@@ -1,5 +1,6 @@
 var http = require('http');
 var fs = require('fs');
+var querystring = require('querystring');
 
 var ContentTypes = {
     css: 'text/css',
@@ -17,9 +18,7 @@ function handler(request, response) {
     //console.log(method);
 
     if (endpoint === '/') {
-        response.writeHead(200, {
-            "Content-Type": "text/html"
-        });
+        response.writeHead(200, {'Content-Type': 'text/html'});
 
         fs.readFile(__dirname + '/../public/index.html', function (error, file) {
             if (error) {
@@ -38,7 +37,19 @@ function handler(request, response) {
         response.writeHead(200, {'Content-Type': 'text/html'});
         response.write(message); //response body
         response.end(); // finish response
-    } else {
+    } else if(endpoint === '/create-post'){
+        response.writeHead(302,{'Location': '/'})
+        var allTheData = '';
+        request.on('data', function (chunkOfData) {
+            allTheData += chunkOfData;
+        });
+        request.on('end', function () {
+            var convertedData = querystring.parse(allTheData);
+            console.log(convertedData);
+            response.end();
+        });
+
+    }else {
         //var url = request.url;
         var parts = endpoint.split('.'); 
         // this line return 'main', 'css' and 'index', 'js'
