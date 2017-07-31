@@ -10,7 +10,9 @@ var ContentTypes = {
 };
 
 function handleHomeRoute(request, response) {
-    response.writeHead(200, {'Content-Type': 'text/html'});
+    response.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
 
     fs.readFile(__dirname + '/../public/index.html', function (error, file) {
         if (error) {
@@ -35,7 +37,9 @@ function handlePublic(request, response) {
 
     fs.readFile(__dirname + '/..' + endpoint, function (error, file) {
         if (error) {
-            response.writeHead(500, {'Content-Type': 'text/html'});
+            response.writeHead(500, {
+                'Content-Type': 'text/html'
+            });
             response.end('<h1>Internel Server Error</h1>');
         } else {
             response.writeHead(200, {
@@ -46,28 +50,70 @@ function handlePublic(request, response) {
     });
 }
 
-function handleRedirect(request, response){
-      response.writeHead(302,{'Location': '/'})
-        var allTheData = '';
-        request.on('data', function (chunkOfData) {
-            allTheData += chunkOfData;
+function handleRedirect(request, response) {
+    response.writeHead(302, {
+        'Location': '/'
+    })
+    var allTheData = '';
+    request.on('data', function (chunkOfData) {
+        allTheData += chunkOfData;
+    });
+    request.on('end', function () {
+        var convertedData = querystring.parse(allTheData).post;
+        fs.readFile(__dirname + '/../src/posts.json', function (error, file) {
+            if (error) {
+                console.log(error);
+                return;
+            }
+
+            var posts = JSON.parse(file);
+            var time = Date.now();
+            posts[time] = convertedData;
+            var toJson = JSON.stringify(posts);
+
+            fs.writeFile(__dirname + '/../src/posts.json', toJson, function (error, file) {
+                if (error) {
+                    console.log(error);
+                    return;
+                }
+
+                response.end(file);
+            });
+
+
         });
-        request.on('end', function () {
-            var convertedData = querystring.parse(allTheData);
-            console.log(convertedData);
-            response.end();
-        });
+    });
+}
+
+
+
+function handlePost(request, response) {
+    response.writeHead(200, {
+        'Content-Type': 'text/html'
+    });
+
+    fs.readFile(__dirname + '/../src/posts.json', function (error, file) {
+        if (error) {
+            console.log(error);
+            return;
+        }
+
+        response.end(file);
+    });
 }
 
 function handleNotFound(request, response) {
-    response.writeHead(404, {'Content-Type': 'text/html'});
+    response.writeHead(404, {
+        'Content-Type': 'text/html'
+    });
     response.end('<h1>Not Found</h1>');
 }
 
 
 module.exports = {
-  handleHomeRoute: handleHomeRoute,
-  handlePublic: handlePublic,
-  handleNotFound: handleNotFound,
-  handleRedirect: handleRedirect
+    handleHomeRoute: handleHomeRoute,
+    handlePublic: handlePublic,
+    handleNotFound: handleNotFound,
+    handleRedirect: handleRedirect,
+    handlePost: handlePost
 };

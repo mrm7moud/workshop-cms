@@ -12,12 +12,16 @@ function handler(request, response) {
     //console.log(method);
 
     if (endpoint === '/') {
-      handlers.handleHomeRoute(request, response);
-    } else if(endpoint === '/create/post'){
-       handlers.handleRedirect(request, response);
-    }else if(endpoint.startsWith('/public')){
+        handlers.handleHomeRoute(request, response);
+    } else if (endpoint === '/create/post') {
+        handlers.handleRedirect(request, response);
+    } else if (endpoint.startsWith('/public')) {
         handlers.handlePublic(request, response);
-    }else{
+    } else if (endpoint === '/posts') {
+        handlers.handlePost(request, response);
+    } else if (endpoint === '/create/post') {
+        handlers.handleGetPost(request, response);
+    } else {
         handlers.handleNotFound(request, response);
     }
 
