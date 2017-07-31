@@ -1,4 +1,5 @@
 var fs = require('fs');
+var querystring = require('querystring');
 
 var ContentTypes = {
     css: 'text/css',

@@ -13,7 +13,7 @@ function handler(request, response) {
 
     if (endpoint === '/') {
       handlers.handleHomeRoute(request, response);
-    } else if(endpoint === '/create-post'){
+    } else if(endpoint === '/create/post'){
        handlers.handleRedirect(request, response);
     }else if(endpoint.startsWith('/public')){
         handlers.handlePublic(request, response);
